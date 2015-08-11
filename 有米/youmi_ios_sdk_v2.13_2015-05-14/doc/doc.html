@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+		<title>有米广告SDK开发者文档</title>
+		<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+		<!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+		<link href="css/docs.css" rel="stylesheet" />
+		<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/doc.js"></script>
+
+		<link rel="stylesheet" href="css/xcode.min.css">
+		<script src="js/highlight.pack.js"></script>
+		<script>
+			hljs.tabReplace = ' ';
+			hljs.initHighlightingOnLoad();
+		</script>
+	</head>
+
+	<body data-spy="scroll" data-target="#ym-navbar" >
+		<div class="header navbar-inner">
+			<div class="container clearfix">
+                <img class="pull-left" src="img/icon.png">
+                <span class="pull-left brand">有米广告 iOS SDK开发者文档</span>
+			</div>
+		</div>
+		
+		<div class="container">
+			<ul class="nav nav-list bs-docs-sidenav affix" id="ym-navbar">  
+				<li class='has-sub'> <a class='sub-header' href='#section_total'>SDK功能概览  <i class="icon-chevron-down"></i></a><ul class='nav nav-list'><li><a href='#section_method'>一.嵌入方法： </a></li><li><a href='#section_framework'>二.添加framework： </a></li><li><a href='#section_setting'>三.全局设置接口： </a></li><li><a href='#section_spot'>四.插屏接口： </a></li><li><a href='#section_sample'>五.使用例子： </a></li></ul></li>
+			</ul>
+
+			<div class="doc-content" >
+				<h2 class="sdkhead" id="section_title">有米 iOS 插屏 SDK 开发者文档:</h2>
+<h3 class="sdkhead" id="section_total">SDK功能概览</h3>
+<h5>一.嵌入方法</h5>
+<h5>二.添加framework</h5>
+<h5>三.全局设置接口</h5>
+<h5>四.插屏接口</h5>
+<h5>五.使用例子</h5>
+<h3 class="sdkhead" id="section_method">一.嵌入方法：</h3>
+<p>把spotlib里的文件都加入到工程中
+并在系统要调用有米广告的地方引入这个头文件
+ConfigHeader.h</p>
+<h3 class="sdkhead" id="section_framework">二.添加framework：</h3>
+<p>storekit.framework</p>
+<p>security.framework</p>
+<p>cfnetwork.framework</p>
+<p>systemconfiguration.framework</p>
+<p>ImageIO.framework</p>
+<p>CoreMotion.framework</p>
+<p>libz.dylib</p>
+<p>libsqlite3.dylib</p>
+<h3 class="sdkhead" id="section_setting">三.全局设置接口：</h3>
+<pre><code>    // 设置开发者的appid与appSecret
+    +(void)initYouMiDeveloperParams:(NSString *)YM_appid YM_SecretId:(NSString*)YM_SecretId;
+
+    // 对于在线参数的请求，我们采用的是同步请求的方式
+    // 设置在线参数请到https://www.youmi.net/apps/setting 网站上。广告设置-&gt;在线参数设置
+    + (id)onlineYouMiValueForKey:(NSString *)key;
+</code></pre>
+<h3 class="sdkhead" id="section_spot">四.插屏接口：</h3>
+<pre><code>    // 初始化插屏广告和设置使用的广告类型(类型为 横屏、竖屏)
+    + (void)initYouMiDeveLoperSpot:(SpotType)spotType;
+
+    // dismissAction为广告点关闭后的回调。
+    + (BOOL)showYouMiSpotAction:(void (^)(BOOL flag))dismissAction;
+
+    // 点击插屏广告的回调,点击成功,flag为YES,否则为NO
+    + (BOOL)clickYouMiSpotAction:(void (^)(BOOL flag))callbackAction;
+</code></pre>
+<h3 class="sdkhead" id="section_sample">五.使用例子：</h3>
+<ul>
+<li>
+<p>1) 所有调用有米广告的地方都需要引入头文件</p>
+<pre><code>ConfigHeader.h
+</code></pre>
+</li>
+<li>
+<p>2) 在AppDelegate.m的didFinishLaunchingWithOptions里加入有米广告的初始化方法</p>
+<pre><code>+(void)initYouMiDeveloperParams:(NSString *)YM_appid YM_SecretId:(NSString*)YM_SecretId;
+可以同时加入插屏的初始化
++(void)initYouMiDeveLoperSpot:(SpotType)spotType;
+
+这个SpotType有三种值,
+kSPOTSpotTypePortrait,
+kSPOTSpotTypeLandscape,
+kSPOTSpotTypeBoth,
+
+如果您的应用不支持旋转,且是竖屏应用,这个值就填:kSPOTSpotTypePortrait,
+如果您的应用不支持旋转,且是横屏应用,就选:kSPOTSpotTypeLandscape,
+如果您的应用支持旋转,即同时支持横竖屏,那么就选:kSPOTSpotTypeBoth.
+(注:尽管不支持旋转的应用,选kSPOTSpotTypeBoth,也能正常显示广告,但是不建议这样做)
+</code></pre>
+</li>
+<li>
+<p>3) 在需要显示广告的地方加入代码</p>
+<pre><code>+ (BOOL)showYouMiSpotAction:(void (^)(BOOL flag))dismissAction;
+</code></pre>
+</li>
+<li>
+<p>4) 如果您需要点击的事件,可以加入点击的回调. (此为可选)</p>
+<pre><code>+ (BOOL)clickYouMiSpotAction:(void (^)(BOOL flag))callbackAction;
+</code></pre>
+</li>
+</ul>
+			</div>
+		</div>
+
+<!--style="margin-top:30px;" style="margin-top:60px;" -->
+	</body>
+</html>
